@@ -4,7 +4,7 @@ import { apiRouter } from './routes/index.js'
 import { errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express()
-const port = 3001
+const port = 3002
 
 connectDB()
 

@@ -1,8 +1,8 @@
 import { User } from "../models/userModel.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
+import { generateToken } from "../utils/token.js";
 
 // ✅ Register a new user
 export const userSignup = async (req, res, next) => {
@@ -10,7 +10,8 @@ export const userSignup = async (req, res, next) => {
         const { name, email, password } = req.body;
 
         const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "User already exists" });
+        if (existingUser) 
+            return res.status(400).json({ message: "User already exists" });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ 
@@ -20,7 +21,7 @@ export const userSignup = async (req, res, next) => {
             profilePic: "",
          });
 
-        res.status(201).json({ message: "User registered successfully", user });
+        res.status(201).json({ message: "User signup successfully", user });
     } catch (error) {
         next(error);
     }
@@ -32,12 +33,15 @@ export const loginUser = async (req, res, next) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ message: "Invalid credentials" });
+        if (!user) 
+            return res.status(400).json({ message: "Invalid credentials" });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+        if (!isMatch) 
+            return res.status(400).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+        const token = generateToken(user._id, "user")
+        res.cookie('token', token)
 
         res.status(200).json({ message: "Login successful", token, user });
     } catch (error) {
@@ -54,7 +58,8 @@ export const logoutUser = async (req, res) => {
 export const getUserProfile = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         res.status(200).json(user);
     } catch (error) {
@@ -68,7 +73,8 @@ export const updateUserProfile = async (req, res, next) => {
         const { name, email, profilePic } = req.body;
         const user = await User.findById(req.user.id);
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         user.name = name || user.name;
         user.email = email || user.email;
@@ -88,10 +94,12 @@ export const changeUserPassword = async (req, res, next) => {
         const { oldPassword, newPassword } = req.body;
         const user = await User.findById(req.user.id);
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         const isMatch = await bcrypt.compare(oldPassword, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Incorrect old password" });
+        if (!isMatch) 
+            return res.status(400).json({ message: "Incorrect old password" });
 
         user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
@@ -108,7 +116,8 @@ export const forgotPassword = async (req, res, next) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         const resetToken = crypto.randomBytes(20).toString("hex");
         user.resetToken = resetToken;
@@ -132,7 +141,8 @@ export const resetPassword = async (req, res, next) => {
         const { token, newPassword } = req.body;
         const user = await User.findOne({ resetToken: token, tokenExpiry: { $gt: Date.now() } });
 
-        if (!user) return res.status(400).json({ message: "Invalid or expired token" });
+        if (!user) 
+            return res.status(400).json({ message: "Invalid or expired token" });
 
         user.password = await bcrypt.hash(newPassword, 10);
         user.resetToken = undefined;
@@ -149,7 +159,8 @@ export const resetPassword = async (req, res, next) => {
 export const deleteMyAccount = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         await User.findByIdAndDelete(req.user.id);
         res.status(200).json({ message: "Your account has been deleted successfully" });
@@ -162,7 +173,8 @@ export const deleteMyAccount = async (req, res, next) => {
 export const deleteUserByAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         await User.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "User deleted by admin successfully" });
@@ -193,7 +205,8 @@ export const banUserByAdmin = async (req, res, next) => {
 export const getUserWatchlist = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).populate("watchlist");
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         res.status(200).json(user.watchlist);
     } catch (error) {
@@ -207,7 +220,8 @@ export const addToWatchlist = async (req, res, next) => {
         const { movieId } = req.body;
         const user = await User.findById(req.user.id);
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         if (user.watchlist.includes(movieId)) return res.status(400).json({ message: "Movie already in watchlist" });
 
@@ -226,7 +240,8 @@ export const removeFromWatchlist = async (req, res, next) => {
         const { movieId } = req.body;
         const user = await User.findById(req.user.id);
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) 
+            return res.status(404).json({ message: "User not found" });
 
         user.watchlist = user.watchlist.filter(id => id.toString() !== movieId);
         await user.save();

@@ -1,6 +1,7 @@
 import express from 'express'
 import { 
     adminLogin, 
+    adminLogout,
     getAllUsers, 
     banUser, 
     unbanUser, 
@@ -20,6 +21,7 @@ const router = express.Router()
 
 //  Admin Authentication
 router.post('/login', adminLogin);
+router.post('/logout', adminProtect, adminLogout);
 
 //  User Management
 router.get('/users', adminProtect, getAllUsers);

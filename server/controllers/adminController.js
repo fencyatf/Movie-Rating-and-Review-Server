@@ -4,15 +4,19 @@ import { Movie } from "../models/movieModel.js";
 import { Review } from "../models/reviewModel.js";
 import { Report } from "../models/reportModel.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { generateToken } from "../utils/token.js";
+
 
 // Admin Login
 export const adminLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log("Login attempt for:", email);
+
         const admin = await Admin.findOne({ email });
 
         if (!admin) {
+            console.log("Admin not found!");
             return next(new Error("Invalid email or password"));
         }
 
@@ -21,8 +25,17 @@ export const adminLogin = async (req, res, next) => {
             return next(new Error("Invalid email or password"));
         }
 
-        const token = jwt.sign({ id: admin._id, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1d" });
-        res.json({ token, adminId: admin._id });
+        const token = generateToken(admin._id, "admin");
+        res.status(200).json({ token, adminId: admin._id, message: "Login successful" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Admin Logout
+export const adminLogout = async (req, res, next) => {
+    try {
+        res.status(200).json({ message: "Admin logged out successfully" });
     } catch (error) {
         next(error);
     }
