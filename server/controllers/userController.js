@@ -21,8 +21,11 @@ export const userSignup = async (req, res, next) => {
             profilePic: "",
          });
 
-        res.status(201).json({ message: "User signup successfully", user });
-    } catch (error) {
+         const userWithoutPassword = user.toObject();
+         delete userWithoutPassword.password;
+ 
+         res.status(201).json({ message: "User signup successful", user: userWithoutPassword });
+     } catch (error) {
         next(error);
     }
 };
@@ -41,9 +44,15 @@ export const loginUser = async (req, res, next) => {
             return res.status(400).json({ message: "Invalid credentials" });
 
         const token = generateToken(user._id, "user")
-        res.cookie('token', token)
+        res.cookie('token', token, { httpOnly: true })
 
-        res.status(200).json({ message: "Login successful", token, user });
+        //Convert Mongoose document to plain object before deleting password
+        //delete user.doc_.password;
+
+        const userWithoutPassword = user.toObject();
+        delete userWithoutPassword.password;
+
+        res.status(200).json({ message: "Login successful", token, user: userWithoutPassword });
     } catch (error) {
         next(error);
     }
@@ -190,6 +199,10 @@ export const banUserByAdmin = async (req, res, next) => {
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
+        }
+        
+        if (!user.isActive) {
+            return res.status(400).json({ message: "User is already banned" });
         }
 
         user.isActive = false;
