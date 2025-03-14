@@ -8,7 +8,7 @@ import {
     searchMovies, 
     filterMoviesByGenre 
 } from '../controllers/movieController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { userAuth, adminOnly } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -19,8 +19,8 @@ router.get('/search/:query', searchMovies);
 router.get('/genre/:genre', filterMoviesByGenre); 
 
 //  Admin Routes (Only accessible by admins)
-router.post('/', protect, adminOnly, addMovie); 
-router.put('/:id', protect, adminOnly, updateMovie); 
-router.delete('/:id', protect, adminOnly, deleteMovie); 
+router.post('/', userAuth, adminOnly, addMovie); 
+router.put('/:id', userAuth, adminOnly, updateMovie); 
+router.delete('/:id', userAuth, adminOnly, deleteMovie); 
 
 export {router as movieRouter};

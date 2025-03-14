@@ -12,34 +12,36 @@ import {
     addMovie,  
     deleteMovie, 
     getAllReviews, 
-    deleteReview 
+    deleteReview, 
+    updateMovie
 } from '../controllers/adminController.js';
-import { adminProtect } from '../middleware/authMiddleware.js';
+import { adminAuth  } from '../middleware/adminAuthMiddleware.js';
 
 const router = express.Router()
 
 
 //  Admin Authentication
 router.post('/login', adminLogin);
-router.post('/logout', adminProtect, adminLogout);
+router.get('/logout', adminAuth, adminLogout);
 
 //  User Management
-router.get('/users', adminProtect, getAllUsers);
-router.put('/users/ban/:id', adminProtect, banUser);
-router.put('/users/unban/:id', adminProtect, unbanUser);
-router.delete('/users/:id', adminProtect, deleteUser);
+router.get('/users', adminAuth, getAllUsers);
+router.put('/users/ban/:id', adminAuth, banUser);
+router.put('/users/unban/:id', adminAuth, unbanUser);
+router.delete('/users/:id', adminAuth, deleteUser);
 
 //  Movie Management
-router.get('/movies', adminProtect, getAllMovies);
-router.post('/movies', adminProtect, addMovie);  
-router.delete('/movies/:id', adminProtect, deleteMovie);
+router.get('/movies', adminAuth, getAllMovies);
+router.post('/movies', adminAuth, addMovie);  
+router.put('/movies/:id', adminAuth, updateMovie);  
+router.delete('/movies/:id', adminAuth, deleteMovie);
 
 //  Review Management
-router.get('/reviews', adminProtect, getAllReviews);
-router.delete('/reviews/:id', adminProtect, deleteReview);
+router.get('/reviews', adminAuth, getAllReviews);
+router.delete('/reviews/:id', adminAuth, deleteReview);
 
 //  Report Management
-router.get('/reports', adminProtect, getReports);
-router.put('/reports/:id', adminProtect, resolveReport);
+router.get('/reports', adminAuth, getReports);
+router.put('/reports/:id', adminAuth, resolveReport);
 
 export {router as adminRouter};

@@ -4,17 +4,17 @@ import {
     getReports, 
     updateReportStatus 
 } from '../controllers/reportController.js';
-import { protect, adminProtect } from '../middleware/authMiddleware.js';
+import { userAuth, adminOnly } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
 //  Report a review
-router.post('/', protect, reportReview);
+router.post('/', userAuth, reportReview);
 
 //  Get all reports (Admin)
-router.get('/', protect, adminProtect, getReports);
+router.get('/', userAuth, adminOnly, getReports);
 
 //  Update report status (Admin)
-router.put('/:reportId', protect, adminProtect, updateReportStatus);
+router.put('/:reportId', userAuth, adminOnly, updateReportStatus);
 
 export {router as reportRouter};

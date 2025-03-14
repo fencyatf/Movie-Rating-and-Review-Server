@@ -17,33 +17,33 @@ import {
     getUserReviews,
     getUserReactions
 } from '../controllers/userController.js';
-import { protect, admin } from '../middleware/authMiddleware.js';
+import { userAuth, adminOnly } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
 //  Authentication & User Management
 router.post('/signup', userSignup);
 router.post('/login', loginUser);
-router.post('/logout', protect, logoutUser);
+router.get('/logout', userAuth, logoutUser);
 
 //  Profile Management
-router.get('/profile', protect, getUserProfile);
-router.put('/profile', protect, updateUserProfile);
-router.put('/profile/change-password', protect, changeUserPassword);
+router.get('/profile', userAuth, getUserProfile);
+router.put('/profile', userAuth, updateUserProfile);
+router.put('/profile/change-password', userAuth, changeUserPassword);
 
 //  Account Management
-router.delete('/delete-my-account', protect, deleteMyAccount);
-router.delete('/:id', protect, admin, deleteUserByAdmin);
-router.put('/:id/ban', protect, admin, banUserByAdmin);
+router.delete('/delete-my-account', userAuth, deleteMyAccount);
+router.delete('/:id', userAuth, adminOnly, deleteUserByAdmin);
+router.put('/:id/ban', userAuth, adminOnly, banUserByAdmin);
 
 //  Password Reset
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
 //  Watchlist & Favorites
-router.get('/watchlist', protect, getUserWatchlist);
-router.post('/watchlist/:movieId', protect, addToWatchlist);
-router.delete('/watchlist/:movieId', protect, removeFromWatchlist);
+router.get('/watchlist', userAuth, getUserWatchlist);
+router.post('/watchlist/:movieId', userAuth, addToWatchlist);
+router.delete('/watchlist/:movieId', userAuth, removeFromWatchlist);
 
 //  User Activity (Reviews & Reactions)
 router.get('/:id/reviews', getUserReviews);

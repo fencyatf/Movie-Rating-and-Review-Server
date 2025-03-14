@@ -44,7 +44,10 @@ export const loginUser = async (req, res, next) => {
             return res.status(400).json({ message: "Invalid credentials" });
 
         const token = generateToken(user._id, "user")
-        res.cookie('token', token, { httpOnly: true })
+        res.cookie('token', token, { 
+            httpOnly: true,
+            secure: true
+         })
 
         //Convert Mongoose document to plain object before deleting password
         //delete user.doc_.password;
@@ -60,8 +63,14 @@ export const loginUser = async (req, res, next) => {
 
 // ✅ Logout user
 export const logoutUser = async (req, res) => {
-    res.status(200).json({ message: "Logout successful" });
-};
+    res.clearCookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0), // Immediately expires the cookie
+    });
+  
+    res.status(200).json({ message: "Logged out successfully" });
+  };
+  
 
 // ✅ Get user profile
 export const getUserProfile = async (req, res, next) => {
@@ -79,23 +88,28 @@ export const getUserProfile = async (req, res, next) => {
 // ✅ Update user profile
 export const updateUserProfile = async (req, res, next) => {
     try {
-        const { name, email, profilePic } = req.body;
-        const user = await User.findById(req.user.id);
-
-        if (!user) 
-            return res.status(404).json({ message: "User not found" });
-
-        user.name = name || user.name;
-        user.email = email || user.email;
-        if (profilePic) user.profilePic = profilePic; 
-        
-        await user.save();
-
-        res.status(200).json({ message: "Profile updated successfully", user });
+      const { name, email, profilePic } = req.body;
+      const userId = req.user.id;
+  
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { name, email, profilePic },
+        { new: true, runValidators: true }
+      ).select("-password"); 
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.status(200).json({
+        message: "Profile updated successfully",
+        user: updatedUser,
+      });
     } catch (error) {
-        next(error);
+      next(error); 
     }
-};
+  };
+  
 
 // ✅ Change user password
 export const changeUserPassword = async (req, res, next) => {

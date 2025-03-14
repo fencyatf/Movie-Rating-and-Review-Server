@@ -8,7 +8,7 @@ import {
     dislikeReview, 
     reportReview 
 } from '../controllers/reviewController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { userAuth, adminOnly } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -16,14 +16,14 @@ const router = express.Router();
 router.get('/:movieId', getReviewsByMovie); 
 
 //  User Routes (Only logged-in users)
-router.post('/:movieId', protect, addReview); 
-router.put('/:reviewId', protect, updateReview);
-router.delete('/:reviewId', protect, deleteReview); 
-router.post('/:reviewId/like', protect, likeReview); 
-router.post('/:reviewId/dislike', protect, dislikeReview); 
-router.post('/:reviewId/report', protect, reportReview); 
+router.post('/:movieId', userAuth, addReview); 
+router.put('/:reviewId', userAuth, updateReview);
+router.delete('/:reviewId', userAuth, deleteReview); 
+router.post('/:reviewId/like', userAuth, likeReview); 
+router.post('/:reviewId/dislike', userAuth, dislikeReview); 
+router.post('/:reviewId/report', userAuth, reportReview); 
 
 //  Admin Routes (Only admins)
-router.delete('/:reviewId/admin', protect, adminOnly, deleteReview); 
+router.delete('/:reviewId/admin', userAuth, adminOnly, deleteReview); 
 
 export {router as reviewRouter};

@@ -4,7 +4,7 @@ import {
     removeReaction, 
     getReactions 
 } from '../controllers/reactionController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { userAuth } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -12,9 +12,9 @@ const router = express.Router();
 router.get('/:reviewId', getReactions);
 
 //  Add a like/dislike to a review
-router.post('/', protect, addReaction);
+router.post('/', userAuth, addReaction);
 
 //  Remove a reaction
-router.delete('/:reactionId', protect, removeReaction);
+router.delete('/:reactionId', userAuth, removeReaction);
 
 export {router as reactionRouter};

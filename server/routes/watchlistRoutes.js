@@ -4,13 +4,13 @@ import {
     removeFromWatchlist, 
     getWatchlist 
 } from '../controllers/watchlistController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { userAuth } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
 //  User Routes (Only logged-in users)
-router.post('/:movieId', protect, addToWatchlist); 
-router.delete('/:movieId', protect, removeFromWatchlist); 
-router.get('/', protect, getWatchlist); 
+router.post('/:movieId', userAuth, addToWatchlist); 
+router.delete('/:movieId', userAuth, removeFromWatchlist); 
+router.get('/', userAuth, getWatchlist); 
 
 export {router as watchlistRouter};

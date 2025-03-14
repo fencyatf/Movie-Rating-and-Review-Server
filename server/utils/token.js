@@ -7,5 +7,6 @@ export const generateToken = (id,role) =>{
 
     } catch (error) {
         console.log("Token generation error:", error)
+        return null;
     }
 }

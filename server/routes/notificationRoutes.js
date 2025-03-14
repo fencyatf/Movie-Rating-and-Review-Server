@@ -4,17 +4,17 @@ import {
     markAsRead, 
     deleteNotification 
 } from '../controllers/notificationController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { userAuth } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
 //  Get notifications for a user
-router.get('/', protect, getUserNotifications);
+router.get('/', userAuth, getUserNotifications);
 
 //  Mark a notification as read
-router.put('/:notificationId', protect, markAsRead);
+router.put('/:notificationId', userAuth, markAsRead);
 
 //  Delete a notification
-router.delete('/:notificationId', protect, deleteNotification);
+router.delete('/:notificationId', userAuth, deleteNotification);
 
 export {router as notificationRouter};

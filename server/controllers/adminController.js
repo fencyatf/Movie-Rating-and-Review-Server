@@ -11,7 +11,7 @@ import { generateToken } from "../utils/token.js";
 export const adminLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        console.log("Login attempt for:", email);
+        //console.log("Login attempt for:", email);
 
         const admin = await Admin.findOne({ email });
 
@@ -25,17 +25,36 @@ export const adminLogin = async (req, res, next) => {
             return next(new Error("Invalid email or password"));
         }
 
-        const token = generateToken(admin._id, "admin");
-        res.status(200).json({ token, adminId: admin._id, message: "Login successful" });
-    } catch (error) {
-        next(error);
-    }
-};
+          // Generate Token
+          const token = generateToken(admin._id, "admin");
+
+          // Store Token in HTTP-only Cookie
+          res.cookie("token", token, {
+              httpOnly: true,
+              secure: true
+          });
+  
+          res.status(200).json({ 
+              adminId: admin._id, 
+              message: "Admin Login successful" 
+          });
+  
+      } catch (error) {
+          next(error);
+      }
+  };
 
 // Admin Logout
 export const adminLogout = async (req, res, next) => {
     try {
+         res.clearCookie("token", "", {
+            httpOnly: true,
+            secure: true,
+            expires: new Date(0), // Expire the cookie
+        });
+
         res.status(200).json({ message: "Admin logged out successfully" });
+
     } catch (error) {
         next(error);
     }
@@ -134,18 +153,65 @@ export const getAllMovies = async (req, res, next) => {
     }
 };
 
+
 // Add a Movie
 export const addMovie = async (req, res, next) => {
     try {
-        const { title, genre, director, releaseYear } = req.body;
-        const newMovie = new Movie({ title, genre, director, releaseYear });
+        const { title, genre, director, releaseDate, duration, description, posterUrl, trailerUrl } = req.body;
 
+        // Check if all required fields are provided
+        if (!title || !genre || !director || !releaseDate || !duration) {
+            return res.status(400).json({ message: "All required fields must be filled." });
+        }
+
+
+        // Check if movie already exists (to prevent duplicates)
+        const existingMovie = await Movie.findOne({ title, director });
+        if (existingMovie) {
+            return res.status(409).json({ message: "Movie with the same title and director already exists." });
+        }
+
+        // Create a new movie object
+        const newMovie = new Movie({ title, genre, director, releaseDate, duration, description, posterUrl, trailerUrl });
+
+        // Save the movie to the database
         await newMovie.save();
-        res.json({ message: "Movie added successfully", movie: newMovie });
+
+        // Return success response
+        res.status(201).json({ message: "Movie added successfully", movie: newMovie });
     } catch (error) {
+
+        console.error("Error adding movie:", error);
+        res.status(500).json({ message: "Internal Server Error" });
         next(error);
     }
 };
+
+// Update a Movie
+export const updateMovie = async (req, res, next) => {
+    try {
+        const { id } = req.params; // Get movie ID from request params
+        const updates = req.body; // Get new movie details from request body
+
+        // Check if the movie exists
+        const movie = await Movie.findById(id);
+        if (!movie) {
+            return res.status(404).json({ message: "Movie not found" });
+        }
+
+        // Update the movie details
+        Object.assign(movie, updates); 
+
+        await movie.save();
+
+        res.json({ message: "Movie updated successfully", movie });
+    } catch (error) {
+        console.error("Error updating movie:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+        next(error);
+    }
+};
+
 
 // Delete a Movie
 export const deleteMovie = async (req, res, next) => {
