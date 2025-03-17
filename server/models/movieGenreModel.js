@@ -7,7 +7,7 @@ const movieGenreSchema = new Schema(
             ref: "Movie", 
             required: true 
         },
-        genreId: {  // Links to the Genre model
+        genreId: {  
             type: mongoose.Schema.Types.ObjectId, 
             ref: "Genre", 
             required: true 

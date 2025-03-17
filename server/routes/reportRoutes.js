@@ -5,6 +5,7 @@ import {
     updateReportStatus 
 } from '../controllers/reportController.js';
 import { userAuth } from '../middleware/userAuthMiddleware.js';
+import { adminAuth } from '../middleware/adminAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -12,9 +13,9 @@ const router = express.Router();
 router.post('/', userAuth, reportReview);
 
 //  Get all reports (Admin)
-router.get('/', userAuth,  getReports);
+router.get('/', adminAuth,  getReports);
 
 //  Update report status (Admin)
-router.put('/:reportId', userAuth,  updateReportStatus);
+router.put('/:reportId', adminAuth,  updateReportStatus);
 
 export {router as reportRouter};

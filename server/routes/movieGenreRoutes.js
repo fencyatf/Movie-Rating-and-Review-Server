@@ -4,7 +4,7 @@ import {
     removeGenreFromMovie, 
     getMoviesByGenre 
 } from '../controllers/movieGenreController.js';
-import { userAuth } from '../middleware/userAuthMiddleware.js';
+import { adminAuth } from '../middleware/adminAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/:categoryId', getMoviesByGenre);
 
 //  Admin-only routes for managing movie-genre relationships
-router.post('/', userAuth,  addGenreToMovie); 
-router.delete('/:movieId/:categoryId', userAuth,  removeGenreFromMovie);
+router.post('/', adminAuth,  addGenreToMovie); 
+router.delete('/:movieId/:categoryId', adminAuth,  removeGenreFromMovie);
 
 export {router as movieGenreRouter};

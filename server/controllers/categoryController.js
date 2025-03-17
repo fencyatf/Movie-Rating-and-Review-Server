@@ -1,6 +1,6 @@
 import { Category } from "../models/categoryModel.js";
 
-// ✅ Create a new category
+// Create a new category
 export const createCategory = async (req, res, next) => {
     try {
         const { name } = req.body;
@@ -20,7 +20,7 @@ export const createCategory = async (req, res, next) => {
     }
 };
 
-// ✅ Get all categories
+// Get all categories
 export const getCategories = async (req, res, next) => {
     try {
         const categories = await Category.find({});
@@ -30,13 +30,13 @@ export const getCategories = async (req, res, next) => {
     }
 };
 
-// ✅ Update a category
+// Update a category
 export const updateCategory = async (req, res, next) => {
     try {
-        const { categoryId } = req.params;
+        const { id } = req.params;
         const { name } = req.body;
 
-        const category = await Category.findById(categoryId);
+        const category = await Category.findById(id);
         if (!category) {
             return res.status(404).json({ message: "Category not found" });
         }
@@ -50,12 +50,12 @@ export const updateCategory = async (req, res, next) => {
     }
 };
 
-// ✅ Delete a category
+// Delete a category
 export const deleteCategory = async (req, res, next) => {
     try {
-        const { categoryId } = req.params;
+        const { id } = req.params;
 
-        const category = await Category.findById(categoryId);
+        const category = await Category.findById(id);
         if (!category) {
             return res.status(404).json({ message: "Category not found" });
         }

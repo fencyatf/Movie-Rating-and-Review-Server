@@ -5,7 +5,7 @@ import {
     updateCategory, 
     deleteCategory 
 } from '../controllers/categoryController.js';
-import { userAuth } from '../middleware/userAuthMiddleware.js';
+import { adminAuth } from '../middleware/adminAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -13,8 +13,8 @@ const router = express.Router();
 router.get('/', getCategories); 
 
 //  Admin Routes (Only Admins can modify categories)
-router.post('/', userAuth,  createCategory); 
-router.put('/:id', userAuth,  updateCategory); 
-router.delete('/:id', userAuth,  deleteCategory); 
+router.post('/', adminAuth,  createCategory); 
+router.put('/:id', adminAuth,  updateCategory); 
+router.delete('/:id', adminAuth,  deleteCategory); 
 
 export {router as categoryRouter};
