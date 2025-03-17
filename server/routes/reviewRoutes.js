@@ -8,7 +8,8 @@ import {
     dislikeReview, 
     reportReview 
 } from '../controllers/reviewController.js';
-import { userAuth, adminOnly } from '../middleware/userAuthMiddleware.js';
+import { userAuth } from '../middleware/userAuthMiddleware.js';
+import { adminAuth } from '../middleware/adminAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -24,6 +25,6 @@ router.post('/:reviewId/dislike', userAuth, dislikeReview);
 router.post('/:reviewId/report', userAuth, reportReview); 
 
 //  Admin Routes (Only admins)
-router.delete('/:reviewId/admin', userAuth, adminOnly, deleteReview); 
+router.delete('/:reviewId/admin', adminAuth,  deleteReview); 
 
 export {router as reviewRouter};

@@ -1,7 +1,7 @@
 import { Movie } from "../models/movieModel.js";
 import { Genre } from "../models/genreModel.js";
 
-// ✅ Add a genre to a movie
+// Add a genre to a movie
 export const addGenreToMovie = async (req, res, next) => {
     try {
         const { movieId, genreId } = req.body;
@@ -33,7 +33,7 @@ export const addGenreToMovie = async (req, res, next) => {
     }
 };
 
-// ✅ Remove a genre from a movie
+// Remove a genre from a movie
 export const removeGenreFromMovie = async (req, res, next) => {
     try {
         const { movieId, genreId } = req.body;
@@ -59,7 +59,7 @@ export const removeGenreFromMovie = async (req, res, next) => {
     }
 };
 
-// ✅ Get movies by genre
+// Get movies by genre
 export const getMoviesByGenre = async (req, res, next) => {
     try {
         const { genreId } = req.params;

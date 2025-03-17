@@ -7,17 +7,16 @@ import {
     updateUserProfile,
     changeUserPassword,
     deleteMyAccount,
-    deleteUserByAdmin,
-    banUserByAdmin,
     forgotPassword,
     resetPassword,
     getUserWatchlist,
     addToWatchlist,
     removeFromWatchlist,
     getUserReviews,
-    getUserReactions
+    getUserReactions,
+    checkUser
 } from '../controllers/userController.js';
-import { userAuth, adminOnly } from '../middleware/userAuthMiddleware.js';
+import { userAuth } from '../middleware/userAuthMiddleware.js';
 
 const router = express.Router();
 
@@ -33,8 +32,7 @@ router.put('/profile/change-password', userAuth, changeUserPassword);
 
 //  Account Management
 router.delete('/delete-my-account', userAuth, deleteMyAccount);
-router.delete('/:id', userAuth, adminOnly, deleteUserByAdmin);
-router.put('/:id/ban', userAuth, adminOnly, banUserByAdmin);
+
 
 //  Password Reset
 router.post('/forgot-password', forgotPassword);
@@ -48,5 +46,10 @@ router.delete('/watchlist/:movieId', userAuth, removeFromWatchlist);
 //  User Activity (Reviews & Reactions)
 router.get('/:id/reviews', getUserReviews);
 router.get('/:id/reactions', getUserReactions);
+
+
+
+// Checking User
+router.get('/check-user',userAuth,checkUser);
 
 export  {router as userRouter};

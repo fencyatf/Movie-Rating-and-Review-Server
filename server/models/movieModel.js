@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const movieSchema = new Schema(
     {
         title:[{ 
-            type: mongoose.Schema.Types.ObjectId, 
+            type: String, 
             ref: "Genre" 
         }],
         genre: [{ 

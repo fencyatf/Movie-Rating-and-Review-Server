@@ -252,3 +252,13 @@ export const deleteReview = async (req, res, next) => {
         next(error);
     }
 };
+
+// Get admin autherized
+export const checkAdmin = async(req, res, next) => {
+    try {
+        
+        res.json({message: "Admin Autherized"});
+    } catch (error) {
+        next(error); 
+    }
+}

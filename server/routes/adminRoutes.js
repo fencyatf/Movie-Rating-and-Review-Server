@@ -13,7 +13,8 @@ import {
     deleteMovie, 
     getAllReviews, 
     deleteReview, 
-    updateMovie
+    updateMovie,
+    checkAdmin
 } from '../controllers/adminController.js';
 import { adminAuth  } from '../middleware/adminAuthMiddleware.js';
 
@@ -43,5 +44,9 @@ router.delete('/reviews/:id', adminAuth, deleteReview);
 //  Report Management
 router.get('/reports', adminAuth, getReports);
 router.put('/reports/:id', adminAuth, resolveReport);
+
+
+// Checking Admin
+router.get('/check-admin',adminAuth,checkAdmin);
 
 export {router as adminRouter};

@@ -9,7 +9,6 @@ import { movieGenreRouter } from './movieGenreRoutes.js';
 import { reactionRouter } from './reactionRoutes.js';
 import { reportRouter } from './reportRoutes.js';
 import { notificationRouter } from './notificationRoutes.js';
-import { authRouter } from './authRoutes.js';
 
 
 const router = express.Router()
@@ -24,7 +23,6 @@ router.use('/movie-genres',movieGenreRouter)
 router.use('/reactions',reactionRouter)
 router.use('/reports',reportRouter)
 router.use('/notifications',notificationRouter)
-router.use('/auth',authRouter)
 
 
 export {router as apiRouter}

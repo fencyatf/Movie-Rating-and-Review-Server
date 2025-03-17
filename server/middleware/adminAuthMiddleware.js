@@ -31,10 +31,10 @@ export const adminAuth = async (req, res, next) => {
 };
 
 // Middleware to restrict access to admin-only routes
-export const adminOnly = (req, res, next) => {
-    if (req.admin?.isAdmin) {
-        next();
-    } else {
-        res.status(403).json({ message: "Not authorized as admin" });
-    }
-};
+// export const adminOnly = (req, res, next) => {
+//     if (req.admin?.isAdmin) {
+//         next();
+//     } else {
+//         res.status(403).json({ message: "Not authorized as admin" });
+//     }
+// };

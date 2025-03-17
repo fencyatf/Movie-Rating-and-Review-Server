@@ -4,7 +4,7 @@ import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
 import { generateToken } from "../utils/token.js";
 
-// ✅ Register a new user
+//  Register a new user
 export const userSignup = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
@@ -30,7 +30,7 @@ export const userSignup = async (req, res, next) => {
     }
 };
 
-// ✅ User login
+//  User login
 export const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -61,7 +61,7 @@ export const loginUser = async (req, res, next) => {
     }
 };
 
-// ✅ Logout user
+//  Logout user
 export const logoutUser = async (req, res) => {
     res.clearCookie("token", "", {
       httpOnly: true,
@@ -72,7 +72,7 @@ export const logoutUser = async (req, res) => {
   };
   
 
-// ✅ Get user profile
+//  Get user profile
 export const getUserProfile = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
@@ -85,7 +85,7 @@ export const getUserProfile = async (req, res, next) => {
     }
 };
 
-// ✅ Update user profile
+//  Update user profile
 export const updateUserProfile = async (req, res, next) => {
     try {
       const { name, email, profilePic } = req.body;
@@ -111,7 +111,7 @@ export const updateUserProfile = async (req, res, next) => {
   };
   
 
-// ✅ Change user password
+//  Change user password
 export const changeUserPassword = async (req, res, next) => {
     try {
         const { oldPassword, newPassword } = req.body;
@@ -133,7 +133,7 @@ export const changeUserPassword = async (req, res, next) => {
     }
 };
 
-// ✅ Forgot password - Send reset email
+//  Forgot password - Send reset email
 export const forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
@@ -158,7 +158,7 @@ export const forgotPassword = async (req, res, next) => {
     }
 };
 
-// ✅ Reset password
+//  Reset password
 export const resetPassword = async (req, res, next) => {
     try {
         const { token, newPassword } = req.body;
@@ -178,7 +178,7 @@ export const resetPassword = async (req, res, next) => {
     }
 };
 
-// ✅ Delete user account (Self)
+//  Delete user account (Self)
 export const deleteMyAccount = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id);
@@ -192,7 +192,7 @@ export const deleteMyAccount = async (req, res, next) => {
     }
 };
 
-// ✅ Delete user account (Admin)
+//  Delete user account (Admin)
 export const deleteUserByAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
@@ -206,7 +206,7 @@ export const deleteUserByAdmin = async (req, res, next) => {
     }
 };
 
-// ✅ Ban user account (Admin)
+//  Ban user account (Admin)
 export const banUserByAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
@@ -228,7 +228,7 @@ export const banUserByAdmin = async (req, res, next) => {
     }
 };
 
-// ✅ Get user watchlist
+//  Get user watchlist
 export const getUserWatchlist = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).populate("watchlist");
@@ -241,7 +241,7 @@ export const getUserWatchlist = async (req, res, next) => {
     }
 };
 
-// ✅ Add movie to watchlist
+//  Add movie to watchlist
 export const addToWatchlist = async (req, res, next) => {
     try {
         const { movieId } = req.body;
@@ -261,7 +261,7 @@ export const addToWatchlist = async (req, res, next) => {
     }
 };
 
-// ✅ Remove movie from watchlist
+//  Remove movie from watchlist
 export const removeFromWatchlist = async (req, res, next) => {
     try {
         const { movieId } = req.body;
@@ -279,7 +279,7 @@ export const removeFromWatchlist = async (req, res, next) => {
     }
 };
 
-// ✅ Get user reviews
+//  Get user reviews
 export const getUserReviews = async (req, res, next) => {
     try {
         res.status(200).json({ message: "Reviews fetched successfully" });
@@ -288,7 +288,7 @@ export const getUserReviews = async (req, res, next) => {
     }
 };
 
-// ✅ Get user reactions
+//  Get user reactions
 export const getUserReactions = async (req, res, next) => {
     try {
         res.status(200).json({ message: "Reactions fetched successfully" });
@@ -296,3 +296,14 @@ export const getUserReactions = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// Get user autherized
+export const checkUser = async(req, res, next) => {
+    try {
+        
+        res.json({message: "User Autherized"});
+    } catch (error) {
+        next(error); 
+    }
+}
