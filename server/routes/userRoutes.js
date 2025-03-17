@@ -9,14 +9,16 @@ import {
     deleteMyAccount,
     forgotPassword,
     resetPassword,
-    getUserWatchlist,
-    addToWatchlist,
-    removeFromWatchlist,
-    getUserReviews,
-    getUserReactions,
     checkUser
 } from '../controllers/userController.js';
 import { userAuth } from '../middleware/userAuthMiddleware.js';
+import { 
+    addToWatchlist, 
+    getWatchlist, 
+    removeFromWatchlist 
+} from '../controllers/watchlistController.js';
+import { getUserReviews } from '../controllers/reviewController.js';
+import { getUserReactions } from '../controllers/reactionController.js';
 
 const router = express.Router();
 
@@ -39,13 +41,13 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
 //  Watchlist & Favorites
-router.get('/watchlist', userAuth, getUserWatchlist);
+router.get('/watchlist', userAuth, getWatchlist);
 router.post('/watchlist/:movieId', userAuth, addToWatchlist);
 router.delete('/watchlist/:movieId', userAuth, removeFromWatchlist);
 
 //  User Activity (Reviews & Reactions)
-router.get('/:id/reviews', getUserReviews);
-router.get('/:id/reactions', getUserReactions);
+router.get('/reviews', userAuth, getUserReviews);
+router.get('/reactions', userAuth, getUserReactions);
 
 
 

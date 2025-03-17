@@ -1,6 +1,20 @@
 import { Review } from "../models/reviewModel.js";
 import { Movie } from "../models/movieModel.js";
-import { User } from "../models/userModel.js";
+
+//  Get user reviews
+export const getUserReviews = async (req, res, next) => {
+    try {
+        const userId = req.user.id; 
+
+        // Fetch reviews from DB based on logged-in user ID
+        const reviews = await Review.find({ userId });
+
+        res.status(200).json({ message: "Reviews fetched successfully", reviews });
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 // Add a Review
 export const addReview = async (req, res, next) => {

@@ -1,6 +1,21 @@
 import { Reaction } from "../models/reactionModel.js";
 import { Movie } from "../models/movieModel.js";
 
+//  Get user reaction
+export const getUserReactions = async (req, res, next) => {
+    try {
+        const userId = req.user.id; // Extract user ID from token
+
+        // Fetch reactions from DB based on logged-in user ID
+        const reactions = await Reaction.find({ userId });
+
+        res.status(200).json({ message: "Reactions fetched successfully", reactions });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 // Add a Reaction (Like/Dislike)
 export const addReaction = async (req, res, next) => {
     try {

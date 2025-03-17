@@ -1,34 +1,45 @@
+import mongoose from "mongoose";
 import { Watchlist } from "../models/watchlistModel.js";
 
-// ✅ Add a movie to the watchlist
+//  Add a movie to the watchlist
 export const addToWatchlist = async (req, res, next) => {
     try {
-        const { movieId } = req.body;
+        const { movieId } = req.params; //  Extracting from params
         const userId = req.user.id;
 
-        // Check if the movie is already in the watchlist
-        let watchlistItem = await Watchlist.findOne({ userId, movieId });
+        //  Check if the movie is already in the watchlist
+        const existingItem = await Watchlist.findOne({ 
+            userId: new mongoose.Types.ObjectId(userId), 
+            movieId: new mongoose.Types.ObjectId(movieId) 
+        });
 
-        if (watchlistItem) {
+        if (existingItem) {
             return res.status(400).json({ message: "Movie is already in the watchlist" });
         }
 
-        watchlistItem = new Watchlist({ userId, movieId });
-        await watchlistItem.save();
+        //  Add to watchlist
+        const watchlistItem = new Watchlist({ 
+            userId: new mongoose.Types.ObjectId(userId), 
+            movieId: new mongoose.Types.ObjectId(movieId) 
+        });
 
+        await watchlistItem.save();
         res.status(201).json({ message: "Movie added to watchlist", watchlistItem });
     } catch (error) {
         next(error);
     }
 };
 
-// ✅ Remove a movie from the watchlist
+//  Remove a movie from the watchlist
 export const removeFromWatchlist = async (req, res, next) => {
     try {
         const { movieId } = req.params;
         const userId = req.user.id;
 
-        const watchlistItem = await Watchlist.findOneAndDelete({ userId, movieId });
+        const watchlistItem = await Watchlist.findOneAndDelete({ 
+            userId: new mongoose.Types.ObjectId(userId), 
+            movieId: new mongoose.Types.ObjectId(movieId) 
+        });
 
         if (!watchlistItem) {
             return res.status(404).json({ message: "Movie not found in the watchlist" });
@@ -40,11 +51,13 @@ export const removeFromWatchlist = async (req, res, next) => {
     }
 };
 
-// ✅ Get a user's watchlist
+//  Get a user's watchlist
 export const getWatchlist = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const watchlist = await Watchlist.find({ userId }).populate("movieId", "title poster_url");
+        const watchlist = await Watchlist.find({ 
+            userId: new mongoose.Types.ObjectId(userId) 
+        }).populate("movieId", "title poster_url"); 
 
         res.json(watchlist);
     } catch (error) {
