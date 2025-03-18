@@ -12,13 +12,14 @@ import {
     checkUser
 } from '../controllers/userController.js';
 import { userAuth } from '../middleware/userAuthMiddleware.js';
-import { 
-    addToWatchlist, 
-    getWatchlist, 
-    removeFromWatchlist 
-} from '../controllers/watchlistController.js';
+// import { 
+//     addToWatchlist, 
+//     getWatchlist, 
+//     removeFromWatchlist 
+// } from '../controllers/watchlistController.js';
 import { getUserReviews } from '../controllers/reviewController.js';
 import { getUserReactions } from '../controllers/reactionController.js';
+import {upload} from "../middleware/multer.js"
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.get('/logout', userAuth, logoutUser);
 
 //  Profile Management
 router.get('/profile', userAuth, getUserProfile);
-router.put('/profile', userAuth, updateUserProfile);
+router.put('/profile', userAuth, upload.single("image"), updateUserProfile);
 router.put('/profile/change-password', userAuth, changeUserPassword);
 
 //  Account Management
@@ -41,9 +42,9 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
 //  Watchlist & Favorites
-router.get('/watchlist', userAuth, getWatchlist);
-router.post('/watchlist/:movieId', userAuth, addToWatchlist);
-router.delete('/watchlist/:movieId', userAuth, removeFromWatchlist);
+// router.get('/watchlist', userAuth, getWatchlist);
+// router.post('/watchlist/:movieId', userAuth, addToWatchlist);
+// router.delete('/watchlist/:movieId', userAuth, removeFromWatchlist);
 
 //  User Activity (Reviews & Reactions)
 router.get('/reviews', userAuth, getUserReviews);

@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
 import { generateToken } from "../utils/token.js";
+import cloudinaryInstance from '../config/cloudinary.js'
 
 //  Register a new user
 export const userSignup = async (req, res, next) => {
@@ -88,27 +89,35 @@ export const getUserProfile = async (req, res, next) => {
 //  Update user profile
 export const updateUserProfile = async (req, res, next) => {
     try {
-      const { name, email, profilePic } = req.body;
-      const userId = req.user.id;
-  
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { name, email, profilePic },
-        { new: true, runValidators: true }
-      ).select("-password"); 
-  
-      if (!updatedUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      res.status(200).json({
-        message: "Profile updated successfully",
-        user: updatedUser,
-      });
+        const { name, email } = req.body;
+        const userId = req.user.id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        let profilePic = user.profilePic;
+        if (req.file) {
+            const cloudinaryRes = await cloudinaryInstance.uploader.upload(req.file.path);
+            profilePic = cloudinaryRes.secure_url;
+        }
+
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.profilePic = profilePic;
+
+        await user.save();
+
+        res.status(200).json({
+            message: "Profile updated successfully",
+            user,
+        });
     } catch (error) {
-      next(error); 
+        next(error);
     }
-  };
+};
+
   
 
 //  Change user password

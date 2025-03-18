@@ -22,9 +22,16 @@ const reviewSchema = new Schema(
             type: String, 
             required: true 
         },
+        reports: [
+            {
+                userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+                reason: { type: String, required: true },
+                reportedAt: { type: Date, default: Date.now }
+            }
+        ] 
     },
     {
-        timestamps:true
+        timestamps: true
     }
 );
 

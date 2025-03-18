@@ -2,10 +2,10 @@ import mongoose, { Schema } from "mongoose";
 
 const movieSchema = new Schema(
     {
-        title:[{ 
+        title: {  
             type: String, 
-            ref: "Genre" 
-        }],
+            required: true 
+        },
         genre: [{ 
             type: String, 
             required: true 

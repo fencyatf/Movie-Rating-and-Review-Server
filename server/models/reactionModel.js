@@ -7,6 +7,11 @@ const reactionSchema = new Schema(
             ref: "User", 
             required: true 
         },
+        movieId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Movie",
+            required: true,
+        },
         reviewId: { 
             type: mongoose.Schema.Types.ObjectId, 
             ref: "Review", 

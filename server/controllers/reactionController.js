@@ -1,5 +1,6 @@
 import { Reaction } from "../models/reactionModel.js";
 import { Movie } from "../models/movieModel.js";
+import { Review } from "../models/reviewModel.js";
 
 //  Get user reaction
 export const getUserReactions = async (req, res, next) => {
@@ -19,8 +20,12 @@ export const getUserReactions = async (req, res, next) => {
 // Add a Reaction (Like/Dislike)
 export const addReaction = async (req, res, next) => {
     try {
-        const { movieId, type } = req.body; // type can be "like" or "dislike"
+        const { movieId, reviewId, type } = req.body; // ✅ Ensure reviewId is included
         const userId = req.user.id;
+
+        if (!movieId || !reviewId || !type) { 
+            return res.status(400).json({ message: "Movie ID, Review ID, and Type are required" });
+        }
 
         // Check if the movie exists
         const movie = await Movie.findById(movieId);
@@ -28,8 +33,14 @@ export const addReaction = async (req, res, next) => {
             return res.status(404).json({ message: "Movie not found" });
         }
 
+        // Check if the review exists
+        const review = await Review.findById(reviewId);
+        if (!review) {
+            return res.status(404).json({ message: "Review not found" });
+        }
+
         // Check if the user has already reacted
-        let reaction = await Reaction.findOne({ userId, movieId });
+        let reaction = await Reaction.findOne({ userId, movieId, reviewId });
 
         if (reaction) {
             // If the reaction already exists, update it
@@ -39,7 +50,7 @@ export const addReaction = async (req, res, next) => {
         }
 
         // Create a new reaction
-        reaction = new Reaction({ userId, movieId, type });
+        reaction = new Reaction({ userId, movieId, reviewId, type });
         await reaction.save();
 
         res.status(201).json({ message: "Reaction added successfully", reaction });
@@ -47,6 +58,7 @@ export const addReaction = async (req, res, next) => {
         next(error);
     }
 };
+
 
 // Remove a Reaction
 export const removeReaction = async (req, res, next) => {

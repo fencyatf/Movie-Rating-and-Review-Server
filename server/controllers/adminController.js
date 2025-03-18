@@ -117,31 +117,6 @@ export const deleteUser = async (req, res, next) => {
     }
 };
 
-// Get all reports
-export const getReports = async (req, res, next) => {
-    try {
-        const reports = await Report.find();
-        res.json(reports);
-    } catch (error) {
-        next(error);
-    }
-};
-
-// Resolve a Report
-export const resolveReport = async (req, res, next) => {
-    try {
-        const report = await Report.findById(req.params.id);
-        if (!report) {
-            return next(new Error("Report not found"));
-        }
-
-        report.status = "resolved";
-        await report.save();
-        res.json({ message: "Report has been resolved" });
-    } catch (error) {
-        next(error);
-    }
-};
 
 // Get all movies
 export const getAllMovies = async (req, res, next) => {
@@ -154,79 +129,6 @@ export const getAllMovies = async (req, res, next) => {
 };
 
 
-// Add a Movie
-export const addMovie = async (req, res, next) => {
-    try {
-        const { title, genre, director, releaseDate, duration, description, posterUrl, trailerUrl } = req.body;
-
-        // Check if all required fields are provided
-        if (!title || !genre || !director || !releaseDate || !duration) {
-            return res.status(400).json({ message: "All required fields must be filled." });
-        }
-
-
-        // Check if movie already exists (to prevent duplicates)
-        const existingMovie = await Movie.findOne({ title, director });
-        if (existingMovie) {
-            return res.status(409).json({ message: "Movie with the same title and director already exists." });
-        }
-
-        // Create a new movie object
-        const newMovie = new Movie({ title, genre, director, releaseDate, duration, description, posterUrl, trailerUrl });
-
-        // Save the movie to the database
-        await newMovie.save();
-
-        // Return success response
-        res.status(201).json({ message: "Movie added successfully", movie: newMovie });
-    } catch (error) {
-
-        console.error("Error adding movie:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-        next(error);
-    }
-};
-
-// Update a Movie
-export const updateMovie = async (req, res, next) => {
-    try {
-        const { id } = req.params; // Get movie ID from request params
-        const updates = req.body; // Get new movie details from request body
-
-        // Check if the movie exists
-        const movie = await Movie.findById(id);
-        if (!movie) {
-            return res.status(404).json({ message: "Movie not found" });
-        }
-
-        // Update the movie details
-        Object.assign(movie, updates); 
-
-        await movie.save();
-
-        res.json({ message: "Movie updated successfully", movie });
-    } catch (error) {
-        console.error("Error updating movie:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-        next(error);
-    }
-};
-
-
-// Delete a Movie
-export const deleteMovie = async (req, res, next) => {
-    try {
-        const movie = await Movie.findById(req.params.id);
-        if (!movie) {
-            return next(new Error("Movie not found"));
-        }
-
-        await movie.deleteOne();
-        res.json({ message: "Movie deleted successfully" });
-    } catch (error) {
-        next(error);
-    }
-};
 
 // Get all reviews
 export const getAllReviews = async (req, res, next) => {
@@ -238,20 +140,7 @@ export const getAllReviews = async (req, res, next) => {
     }
 };
 
-// Delete a Review
-export const deleteReview = async (req, res, next) => {
-    try {
-        const review = await Review.findById(req.params.id);
-        if (!review) {
-            return next(new Error("Review not found"));
-        }
 
-        await review.deleteOne();
-        res.json({ message: "Review deleted successfully" });
-    } catch (error) {
-        next(error);
-    }
-};
 
 // Get admin autherized
 export const checkAdmin = async(req, res, next) => {

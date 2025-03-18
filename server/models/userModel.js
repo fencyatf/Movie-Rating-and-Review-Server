@@ -42,7 +42,7 @@ const userSchema = new Schema(
         watchlist: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "Movie", // Assuming you have a "Movie" model
+                ref: "Movie", 
             },
         ],
     },

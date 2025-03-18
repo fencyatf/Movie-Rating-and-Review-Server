@@ -71,7 +71,8 @@ export const getMoviesByGenre = async (req, res, next) => {
         }
 
         // Find movies with the given genre
-        const movies = await Movie.find({ genres: genreId });
+        const movies = await Movie.find({ genres: { $in: [genreId] } });
+
 
         if (movies.length === 0) {
             return res.status(404).json({ message: "No movies found for this genre" });
