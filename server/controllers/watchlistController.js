@@ -8,9 +8,9 @@ export const addToWatchlist = async (req, res, next) => {
         const userId = req.user.id;
 
         //  Check if the movie is already in the watchlist
-        const existingItem = await Watchlist.findOne({ 
-            userId: new mongoose.Types.ObjectId(userId), 
-            movieId: new mongoose.Types.ObjectId(movieId) 
+        const existingItem = await Watchlist.findOne({
+            userId: new mongoose.Types.ObjectId(userId),
+            movieId: new mongoose.Types.ObjectId(movieId)
         });
 
         if (existingItem) {
@@ -18,9 +18,9 @@ export const addToWatchlist = async (req, res, next) => {
         }
 
         //  Add to watchlist
-        const watchlistItem = new Watchlist({ 
-            userId: new mongoose.Types.ObjectId(userId), 
-            movieId: new mongoose.Types.ObjectId(movieId) 
+        const watchlistItem = new Watchlist({
+            userId: new mongoose.Types.ObjectId(userId),
+            movieId: new mongoose.Types.ObjectId(movieId)
         });
 
         await watchlistItem.save();
@@ -36,9 +36,9 @@ export const removeFromWatchlist = async (req, res, next) => {
         const { movieId } = req.params;
         const userId = req.user.id;
 
-        const watchlistItem = await Watchlist.findOneAndDelete({ 
-            userId: new mongoose.Types.ObjectId(userId), 
-            movieId: new mongoose.Types.ObjectId(movieId) 
+        const watchlistItem = await Watchlist.findOneAndDelete({
+            userId: new mongoose.Types.ObjectId(userId),
+            movieId: new mongoose.Types.ObjectId(movieId)
         });
 
         if (!watchlistItem) {
@@ -55,11 +55,13 @@ export const removeFromWatchlist = async (req, res, next) => {
 export const getWatchlist = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const watchlist = await Watchlist.find({ 
-            userId: new mongoose.Types.ObjectId(userId) 
-        }).populate("movieId", "title poster_url"); 
+        const watchlist = await Watchlist.find({ userId: userId })
+            .populate("movieId", "title poster_url");
 
-        res.json(watchlist);
+        // ✅ Filter out any entries where movieId is null
+        const filteredWatchlist = watchlist.filter(item => item.movieId);
+
+        res.json(filteredWatchlist);
     } catch (error) {
         next(error);
     }

@@ -7,7 +7,8 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,  
     params: {
         folder: "profile_pictures",
-        format: "jpg",
+        format: async (req, file) => "jpg", // Ensuring JPG format
+        public_id: (req, file) => `${Date.now()}-${file.originalname}`,
     },
 });
 

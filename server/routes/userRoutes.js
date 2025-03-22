@@ -30,7 +30,7 @@ router.get('/logout', userAuth, logoutUser);
 
 //  Profile Management
 router.get('/profile', userAuth, getUserProfile);
-router.put('/profile', userAuth, upload.single("image"), updateUserProfile);
+router.put('/profile', userAuth, upload.single("profilePic"), updateUserProfile);
 router.put('/profile/change-password', userAuth, changeUserPassword);
 
 //  Account Management
@@ -41,10 +41,6 @@ router.delete('/delete-my-account', userAuth, deleteMyAccount);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
-//  Watchlist & Favorites
-// router.get('/watchlist', userAuth, getWatchlist);
-// router.post('/watchlist/:movieId', userAuth, addToWatchlist);
-// router.delete('/watchlist/:movieId', userAuth, removeFromWatchlist);
 
 //  User Activity (Reviews & Reactions)
 router.get('/reviews', userAuth, getUserReviews);

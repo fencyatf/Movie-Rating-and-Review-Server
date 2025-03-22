@@ -11,22 +11,22 @@ export const userSignup = async (req, res, next) => {
         const { name, email, password } = req.body;
 
         const existingUser = await User.findOne({ email });
-        if (existingUser) 
+        if (existingUser)
             return res.status(400).json({ message: "User already exists" });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ 
-            name, 
-            email, 
+        const user = await User.create({
+            name,
+            email,
             password: hashedPassword,
             profilePic: "",
-         });
+        });
 
-         const userWithoutPassword = user.toObject();
-         delete userWithoutPassword.password;
- 
-         res.status(201).json({ message: "User signup successful", user: userWithoutPassword });
-     } catch (error) {
+        const userWithoutPassword = user.toObject();
+        delete userWithoutPassword.password;
+
+        res.status(201).json({ message: "User signup successful", user: userWithoutPassword });
+    } catch (error) {
         next(error);
     }
 };
@@ -37,18 +37,18 @@ export const loginUser = async (req, res, next) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if (!user) 
+        if (!user)
             return res.status(400).json({ message: "Invalid credentials" });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) 
+        if (!isMatch)
             return res.status(400).json({ message: "Invalid credentials" });
 
         const token = generateToken(user._id, "user")
-        res.cookie('token', token, { 
+        res.cookie('token', token, {
             httpOnly: true,
             secure: true
-         })
+        })
 
         //Convert Mongoose document to plain object before deleting password
         //delete user.doc_.password;
@@ -65,26 +65,32 @@ export const loginUser = async (req, res, next) => {
 //  Logout user
 export const logoutUser = async (req, res) => {
     res.clearCookie("token", "", {
-      httpOnly: true,
-      expires: new Date(0), // Immediately expires the cookie
+        httpOnly: true,
+        expires: new Date(0), // Immediately expires the cookie
     });
-  
+
     res.status(200).json({ message: "Logged out successfully" });
-  };
-  
+};
+
 
 //  Get user profile
 export const getUserProfile = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
-        if (!user) 
+        if (!user)
             return res.status(404).json({ message: "User not found" });
 
-        res.status(200).json(user);
+        res.status(200).json({
+            name: user.name,
+            email: user.email,
+            profilePic: user.profilePic, // Ensure profilePic is included
+            createdAt: user.createdAt,
+        });
     } catch (error) {
         next(error);
     }
 };
+
 
 //  Update user profile
 export const updateUserProfile = async (req, res, next) => {
@@ -118,7 +124,7 @@ export const updateUserProfile = async (req, res, next) => {
     }
 };
 
-  
+
 
 //  Change user password
 export const changeUserPassword = async (req, res, next) => {
@@ -126,11 +132,11 @@ export const changeUserPassword = async (req, res, next) => {
         const { oldPassword, newPassword } = req.body;
         const user = await User.findById(req.user.id);
 
-        if (!user) 
+        if (!user)
             return res.status(404).json({ message: "User not found" });
 
         const isMatch = await bcrypt.compare(oldPassword, user.password);
-        if (!isMatch) 
+        if (!isMatch)
             return res.status(400).json({ message: "Incorrect old password" });
 
         user.password = await bcrypt.hash(newPassword, 10);
@@ -148,7 +154,7 @@ export const forgotPassword = async (req, res, next) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
 
-        if (!user) 
+        if (!user)
             return res.status(404).json({ message: "User not found" });
 
         const resetToken = crypto.randomBytes(20).toString("hex");
@@ -173,7 +179,7 @@ export const resetPassword = async (req, res, next) => {
         const { token, newPassword } = req.body;
         const user = await User.findOne({ resetToken: token, tokenExpiry: { $gt: Date.now() } });
 
-        if (!user) 
+        if (!user)
             return res.status(400).json({ message: "Invalid or expired token" });
 
         user.password = await bcrypt.hash(newPassword, 10);
@@ -191,7 +197,7 @@ export const resetPassword = async (req, res, next) => {
 export const deleteMyAccount = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id);
-        if (!user) 
+        if (!user)
             return res.status(404).json({ message: "User not found" });
 
         await User.findByIdAndDelete(req.user.id);
@@ -205,7 +211,7 @@ export const deleteMyAccount = async (req, res, next) => {
 export const deleteUserByAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
-        if (!user) 
+        if (!user)
             return res.status(404).json({ message: "User not found" });
 
         await User.findByIdAndDelete(req.params.id);
@@ -223,7 +229,7 @@ export const banUserByAdmin = async (req, res, next) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        
+
         if (!user.isActive) {
             return res.status(400).json({ message: "User is already banned" });
         }
@@ -239,11 +245,11 @@ export const banUserByAdmin = async (req, res, next) => {
 
 
 // Get user autherized
-export const checkUser = async(req, res, next) => {
+export const checkUser = async (req, res, next) => {
     try {
-        
-        res.json({message: "User Autherized"});
+
+        res.json({ message: "User Autherized" });
     } catch (error) {
-        next(error); 
+        next(error);
     }
 }
