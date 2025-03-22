@@ -25,29 +25,31 @@ export const adminLogin = async (req, res, next) => {
             return next(new Error("Invalid email or password"));
         }
 
-          // Generate Token
-          const token = generateToken(admin._id, "admin");
+        // Generate Token
+        const token = generateToken(admin._id, "admin");
 
-          // Store Token in HTTP-only Cookie
-          res.cookie("token", token, {
-              httpOnly: true,
-              secure: true
-          });
-  
-          res.status(200).json({ 
-              adminId: admin._id, 
-              message: "Admin Login successful" 
-          });
-  
-      } catch (error) {
-          next(error);
-      }
-  };
+        // Store Token in HTTP-only Cookie
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true
+        });
+
+        res.status(200).json({
+            token,
+            adminId: admin._id,
+            role: "admin",
+            message: "Admin Login successful"
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 // Admin Logout
 export const adminLogout = async (req, res, next) => {
     try {
-         res.clearCookie("token", "", {
+        res.clearCookie("token", "", {
             httpOnly: true,
             secure: true,
             expires: new Date(0), // Expire the cookie
@@ -143,11 +145,11 @@ export const getAllReviews = async (req, res, next) => {
 
 
 // Get admin autherized
-export const checkAdmin = async(req, res, next) => {
+export const checkAdmin = async (req, res, next) => {
     try {
-        
-        res.json({message: "Admin Autherized"});
+
+        res.json({ message: "Admin Autherized" });
     } catch (error) {
-        next(error); 
+        next(error);
     }
 }
