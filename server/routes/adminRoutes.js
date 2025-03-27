@@ -7,7 +7,6 @@ import {
     unbanUser, 
     deleteUser,  
     getAllMovies, 
-    getAllReviews, 
     checkAdmin
 } from '../controllers/adminController.js';
 import { adminAuth  } from '../middleware/adminAuthMiddleware.js';
@@ -30,7 +29,7 @@ router.get('/movies', adminAuth, getAllMovies);
 
 
 //  Review Management
-router.get('/reviews', adminAuth, getAllReviews);
+//router.get('/reviews', adminAuth, getAllReviews);
 
 // Checking Admin
 router.get('/check-admin',adminAuth,checkAdmin);

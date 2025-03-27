@@ -123,7 +123,8 @@ export const deleteUser = async (req, res, next) => {
 // Get all movies
 export const getAllMovies = async (req, res, next) => {
     try {
-        const movies = await Movie.find();
+        const movies = await Movie.find().populate("genre", "name").sort({ createdAt: -1 });
+        console.log("Sorted Movies:", movies); 
         res.json(movies);
     } catch (error) {
         next(error);
@@ -133,14 +134,14 @@ export const getAllMovies = async (req, res, next) => {
 
 
 // Get all reviews
-export const getAllReviews = async (req, res, next) => {
-    try {
-        const reviews = await Review.find();
-        res.json(reviews);
-    } catch (error) {
-        next(error);
-    }
-};
+// export const getAllReviews = async (req, res, next) => {
+//     try {
+//         const reviews = await Review.find().sort({createdAt:-1});
+//         res.json(reviews);
+//     } catch (error) {
+//         next(error);
+//     }
+// };
 
 
 

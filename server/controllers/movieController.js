@@ -1,3 +1,4 @@
+import { Genre } from "../models/genreModel.js";
 import { Movie } from "../models/movieModel.js";
 
 // Create a new movie (Admin only)
@@ -34,7 +35,7 @@ export const addMovie = async (req, res, next) => {
 // Get all movies
 export const getAllMovies = async (req, res, next) => {
     try {
-        const movies = await Movie.find({});
+        const movies = await Movie.find({}).select("title posterUrl averageRating ratingCount description").sort("-createdAt");;
         res.json(movies);
     } catch (error) {
         next(error);
@@ -124,8 +125,15 @@ export const filterMoviesByGenre = async (req, res, next) => {
     try {
         const { genre } = req.params;
 
-        // Case-insensitive search using regex
-        const movies = await Movie.find({ genre: { $regex: new RegExp(genre, "i") } });
+        // Find genre by name (case-insensitive)
+        const genreDoc = await Genre.findOne({ name: { $regex: new RegExp(`^${genre}$`, "i") } });
+
+        if (!genreDoc) {
+            return res.status(404).json({ message: "Genre not found" });
+        }
+
+        // Fetch movies using the genre ID
+        const movies = await Movie.find({ genre: genreDoc._id });
 
         if (movies.length === 0) {
             return res.status(404).json({ message: "No movies found in this genre" });

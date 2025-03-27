@@ -29,12 +29,3 @@ export const userAuth = async (req, res, next) => {
         res.status(401).json({ message: "Not authorized, token failed" });
     }
 };
-
-// Middleware to check admin access for a user
-// export const adminOnly = (req, res, next) => {
-//     if (req.user?.isAdmin) {
-//         next();
-//     } else {
-//         res.status(403).json({ message: "Not authorized as admin" });
-//     }
-// };

@@ -6,7 +6,8 @@ import {
     getReviewsByMovie, 
     likeReview, 
     dislikeReview, 
-    reportReview 
+    reportReview
+    
 } from '../controllers/reviewController.js';
 import { userAuth } from '../middleware/userAuthMiddleware.js';
 import { adminAuth } from '../middleware/adminAuthMiddleware.js';

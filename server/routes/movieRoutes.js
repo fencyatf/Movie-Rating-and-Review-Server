@@ -8,7 +8,6 @@ import {
     searchMovies, 
     filterMoviesByGenre 
 } from '../controllers/movieController.js';
-import { userAuth } from '../middleware/userAuthMiddleware.js';
 import { adminAuth } from '../middleware/adminAuthMiddleware.js';
 
 const router = express.Router();

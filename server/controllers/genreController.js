@@ -21,7 +21,7 @@ export const createGenre = async (req, res, next) => {
 // Get all genres
 export const getGenres = async (req, res, next) => {
     try {
-        const genres = await Genre.find();
+        const genres = await Genre.find().sort({ createdAt: -1 });
         res.json(genres);
     } catch (error) {
         next(error);

@@ -40,11 +40,15 @@ export const loginUser = async (req, res, next) => {
         if (!user)
             return res.status(400).json({ message: "Invalid credentials" });
 
+        if (user.isBanned) {
+            return res.status(403).json({ message: "You are banned from logging in" });
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch)
             return res.status(400).json({ message: "Invalid credentials" });
 
-        const token = generateToken(user._id, "user")
+        const token = generateToken(user._id)
         res.cookie('token', token, {
             httpOnly: true,
             secure: true

@@ -7,7 +7,8 @@ const movieSchema = new Schema(
             required: true 
         },
         genre: [{ 
-            type: String, 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "Genre", 
             required: true 
         }], 
         releaseDate: {
@@ -28,9 +29,9 @@ const movieSchema = new Schema(
         posterUrl: { 
             type: String 
         },
-        trailerUrl: { 
-            type: String 
-        },
+        // trailerUrl: { 
+        //     type: String 
+        // },
         averageRating: { 
             type: Number, 
             default: 0 

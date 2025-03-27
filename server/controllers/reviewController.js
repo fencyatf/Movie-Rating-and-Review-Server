@@ -2,27 +2,12 @@ import { Review } from "../models/reviewModel.js";
 import { Movie } from "../models/movieModel.js";
 
 
-//  Get user reviews
-export const getUserReviews = async (req, res, next) => {
-    try {
-        const userId = req.user.id; 
-
-        // Fetch reviews from DB based on logged-in user ID
-        const reviews = await Review.find({ userId }).sort({createdAt: -1});
-
-        res.status(200).json({ message: "Reviews fetched successfully", reviews });
-    } catch (error) {
-        next(error);
-    }
-};
-
-
 // Add a Review
 export const addReview = async (req, res, next) => {
     try {
         const movieId = req.params.movieId;
         const userId = req.user.id;
-        const { rating, review } = req.body; 
+        const { rating, review } = req.body;
 
         const movie = await Movie.findById(movieId);
         if (!movie) {
@@ -124,35 +109,36 @@ export const getReviewsByMovie = async (req, res, next) => {
     try {
         const { movieId } = req.params;
 
-        // 🔴 Debugging: Log received movieId
-        console.log("Received movieId:", movieId);  
-
-        // 🔴 Check if movieId is missing
+        // 🔴 Validate if movieId is provided
         if (!movieId) {
             return res.status(400).json({ message: "Movie ID is required" });
         }
 
-        // 🔴 Validate movieId format before querying DB
+        // 🔴 Validate if movieId is a valid MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(movieId)) {
             console.error("Invalid movie ID format:", movieId);
             return res.status(400).json({ message: "Invalid movie ID format" });
         }
 
-        // ✅ Fetch reviews from DB
-        const reviews = await Review.find({ movieId })
-            .populate("userId", "name profile_pic")
+        // ✅ Fetch reviews for the movie
+        let reviews = await Review.find({ movieId })
+            .populate("userId", "name profile_pic") // Includes user name & profile pic
             .exec();
 
+        // 🔴 Check if there are no reviews for the movie
         if (!reviews.length) {
-            return res.status(404).json({ message: "No reviews found for this movie" });
+            return res.status(200).json({ message: "No reviews found for this movie", reviews: [] });
         }
 
-        res.status(200).json(reviews);
+        // ✅ Return reviews
+        res.status(200).json({ message: "Reviews fetched successfully", reviews });
+
     } catch (error) {
-        console.error("Error fetching reviews:", error); // Log the actual error
+        console.error("Error fetching reviews:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
 // Like a Review
 export const likeReview = async (req, res, next) => {
     try {
@@ -244,6 +230,21 @@ export const reportReview = async (req, res, next) => {
 
         await review.save();
         res.json({ message: "Review reported successfully", review });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const getUserReviews = async (req, res, next) => {
+    try {
+        const userId = req.user.id;  // Get logged-in user's ID
+
+        const reviews = await Review.find({ userId })
+            .populate("movieId", "title")  // Populate movie title
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({ message: "User reviews fetched successfully", reviews });
     } catch (error) {
         next(error);
     }
